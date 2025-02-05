@@ -28,21 +28,16 @@ var DataModel = mongoose.model('chairs', DataSchema);
 io.on('connection', function(socket) {
   console.log('A user connected');
 
-  // Emit some initial real-time data
   socket.emit('initialData', 'Hello from server!');
-
-  // Handle real-time data update (this is just an example)
   socket.on('sendData', function(data) {
     console.log('Received data from client:', data);
   });
 
-  // Handle disconnection
   socket.on('disconnect', function() {
     console.log('User disconnected');
   });
 });
 
-// GET route to fetch data from MongoDB
 app.get('/readdata', async function(req, res) {
   try {
     // Using async/await to fetch data
@@ -67,6 +62,29 @@ app.post('/adddata', express.json(),async function(req, res) {
     res.status(200).json({ message: 'Data added successfully' });
   });
 });
+
+app.delete('/delete', async function (req, res) {
+  try {
+    const { _id } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({ error: 'ID is required' });
+    }
+
+    const result = await DataModel.findByIdAndDelete(_id);
+
+    if (!result) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    res.status(200).json({ message: 'Deleted successfully', deletedItem: result });
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 
 // Start the server
 var PORT = 8000;
