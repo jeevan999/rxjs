@@ -1,6 +1,7 @@
 const express = require('express');
 const routes = express.Router();
 const mongoose = require('mongoose');
+const { io } = require('../index');
 
 const FoodItemSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -9,19 +10,17 @@ const FoodItemSchema = new mongoose.Schema({
 
 const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems'); 
 
-
 routes.post('/food-items',async (req, res) => {
     try {
-        const { name, price } = req.body; // Get data from request
+        const { name, price } = req.body;
 
         if (!name || !price) {
             return res.status(400).json({ message: "All fields are required!" });
         }
 
-        const newFoodItem = new FoodItem({ name, price }); // Create a new instance
-        await newFoodItem.save(); // Save to MongoDB
-
-        console.log("Food item added:", newFoodItem);
+        const newFoodItem = new FoodItem({ name, price });
+        await newFoodItem.save();
+        io.emit("foodItemAdded", newFoodItem);
         res.status(201).json({ message: "Food item added successfully", data: newFoodItem });
     } catch (error) {
         console.error("Error adding food item:", error);
