@@ -7,9 +7,7 @@ const FoodItemSchema = new mongoose.Schema({
     price: { type: Number, required: true },
 });
 
-const FoodItem = mongoose.model('foodItems', FoodItemSchema);
-
-
+const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems'); 
 
 routes.post('/food-items',async (req, res) => {
     try {
