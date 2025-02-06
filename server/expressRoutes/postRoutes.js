@@ -9,6 +9,7 @@ const FoodItemSchema = new mongoose.Schema({
 
 const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems'); 
 
+
 routes.post('/food-items',async (req, res) => {
     try {
         const { name, price } = req.body; // Get data from request
