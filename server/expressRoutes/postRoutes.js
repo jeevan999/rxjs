@@ -1,16 +1,16 @@
 const express = require('express');
 const routes = express.Router();
 const mongoose = require('mongoose');
-const { io } = require('../index');
+const { getIo } = require('../socket'); // Import getIo from socket.js
 
 const FoodItemSchema = new mongoose.Schema({
     name: { type: String, required: true },
     price: { type: Number, required: true },
 });
 
-const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems'); 
+const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems');
 
-routes.post('/food-items',async (req, res) => {
+routes.post('/food-items', async (req, res) => {
     try {
         const { name, price } = req.body;
 
@@ -20,20 +20,15 @@ routes.post('/food-items',async (req, res) => {
 
         const newFoodItem = new FoodItem({ name, price });
         await newFoodItem.save();
-        io.emit("foodItemAdded", newFoodItem);
+
+        const io = getIo(); // Get initialized io instance
+        io.emit("foodItemAdded", newFoodItem); // Emit event
+
         res.status(201).json({ message: "Food item added successfully", data: newFoodItem });
     } catch (error) {
         console.error("Error adding food item:", error);
         res.status(500).json({ message: "Server error" });
     }
-});
-
-routes.post('/servers', (req, res) => {
-    res.send("Server added successfully");
-});
-
-routes.post('/chairs', (req, res) => {
-    res.send("Chair added successfully");
 });
 
 module.exports = routes;

@@ -2,43 +2,47 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { createServer } = require('http');
-const { Server } = require('socket.io');
+const { initializeSocket } = require('./socket'); // Import initializeSocket
 
 const app = express();
-const server = createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: "*", // Allow requests from any origin (change for security)
-        methods: ["GET", "POST"]
-    }
-});
+const server = createServer(app);
 
 app.use(express.json());
 app.use(cors());
 
+mongoose.connect("mongodb://localhost:27017/table_booking").then(() => {
+    console.log("Mongoose Connected!");
+});
+
 const getRoutes = require("./expressRoutes/getRouts");
 const postRoutes = require("./expressRoutes/postRoutes");
 const deleteRoutes = require("./expressRoutes/deleteRoutes");
+const authRoutes = require("./expressRoutes/authRoutes");
 
-mongoose.connect("mongodb://localhost:27017/table_booking").then(() => {
-    console.log('mongoose Connected!');
-})
+app.use("/read-data", getRoutes);
+app.use("/add-data", postRoutes);
+app.use("/delete-data", deleteRoutes);
+app.use("/auth", authRoutes)
 
-app.use('/read-data', getRoutes)
-app.use('/add-data', postRoutes)
-app.use('/delete-data', deleteRoutes)
-
-
-io.on('connection', (socket) => {
-    console.log(`User connected: ${socket.id}`);
-
-    socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
-    });
-});
-
-module.exports = { io };
+// Initialize Socket.IO
+initializeSocket(server);
 
 server.listen(8000, () => {
-    console.log('listening to port 8000')
-})
+    console.log("Listening on port 8000");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+// command for starting mongodb
+// sudo mongod --dbpath=/Users/nikhilkrishna/data/db
+
+
