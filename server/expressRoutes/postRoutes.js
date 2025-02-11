@@ -8,6 +8,16 @@ const FoodItemSchema = new mongoose.Schema({
     price: { type: Number, required: true },
 });
 
+
+const FoodIngredients = new mongoose.Schema({
+    name: { type: String, required: true },
+    name2: { type: Number, required: true },
+    name3: { type: Array, required: true },
+    name4: { type: Boolean, required: true },
+    name5: { type: Date, required: true },
+    name6: { type: Map, required: true}
+})
+
 const FoodItem = mongoose.model('FoodItem', FoodItemSchema, 'foodItems');
 
 routes.post('/food-items', async (req, res) => {

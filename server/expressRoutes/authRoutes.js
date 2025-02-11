@@ -8,12 +8,12 @@ const { verifyToken } = require('../utils/tokenVierifier')
 dotenv.config();
 const routes = express.Router();
 
-const User = mongoose.model('Users', new mongoose.Schema({
+const User = mongoose.model('user', new mongoose.Schema({
     email: String,
     password: String
 }))
 
-const JWT_SECRET = "e9b1c6bff09b60c3a5e3e24d5a9a1c31728c5b24ad6f76de5d9e21dfcd2e1b52";
+const JWT_SECRET = process.env.JWT_SECRET
 
 
 routes.post('/login', async (req, res) => {
