@@ -19,11 +19,13 @@ const getRoutes = require("./expressRoutes/getRouts");
 const postRoutes = require("./expressRoutes/postRoutes");
 const deleteRoutes = require("./expressRoutes/deleteRoutes");
 const authRoutes = require("./expressRoutes/authRoutes");
+const projectRoutes=require("./expressRoutes/projectRoutes")
 
 app.use("/read-data", getRoutes);
 app.use("/add-data", postRoutes);
 app.use("/delete-data", deleteRoutes);
-app.use("/auth", authRoutes)
+app.use("/auth", authRoutes);
+app.use("/projects",projectRoutes)
 
 // Initialize Socket.IO
 initializeSocket(server);
